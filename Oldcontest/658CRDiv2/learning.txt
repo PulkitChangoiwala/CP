@@ -1,0 +1,4 @@
+B - Gaming question, Lots of thinking was required
+C - hard version is nice question, can see editorial again
+D - Nice question based on observation of input permutation and then using standard dp subset sum. In question
+like this see the pattern in input.(some basic technique can be fixxing max or min element).

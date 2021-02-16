@@ -1,0 +1,126 @@
+from 1340B:
+
+-- DP of three states. With 0 & 1 string. Nice Dp question.
+
+
+
+
+
+
+
+
+
+
+
+650 CR Div 3:
+
+from c:
+To accomodate base cases around indices 0 and n-1 we theoretically expands the array on both sides, constraining it to the given conditions.
+This helps us to solve base cases in similar way as general cases.
+
+
+from e:
+
+1)
+for making an array of 'n' number k-cyclic we need to place same elements at gcd(n,k) apart.
+Thus we need e = n/gcd(n,k) elements of the same type. And let there be such 'g' groups then 
+if g*e >=n (i.e. total number of elements which can be divided in group of 'e' same  elements) 
+then array can be k-cyclic.
+
+2) STL function for gcd is __gcd(a,b)
+
+
+from f1:
+
+--> When sorting and asking number of swaps then we can look for LIS of given array which is sorted.
+--> Here instead of actual value only ordering matters so we reduce the array A to A' with values from 
+0 to n-1. Keeping the ordering.
+ 
+
+
+
+
+
+
+
+
+
+651 CR Div2
+D
+We can use binary search to search over all possible answer (that is range of input values)
+with BS we can change lower bound and upper bound on the answer with keeping in mind constraint required to generate answer. 
+
+
+
+
+
+
+CR Gloabal Round 9
+
+Nice Contest. All problems are nice.
+
+B,D - Find the solution which is universal and easily achieveable.
+
+C-Element Extermination
+	-- Observing property of answer and arriving at conditions for possible answer.
+
+
+E-Inversion SwapSort
+	-- Nice question.
+	-- Maniers times you do not need actual array only the ordering of the elements. So array is reduced to array with elements with 1...N. 
+It simplifies how we arrive at solution.
+
+
+
+
+
+
+
+657CR DIV2
+Couldn't solve single question during contest
+
+A- Nice brute force implementation
+B- require mathemaical thinking
+C- Nice question on observing some propery of answer, then using
+binary  search finding the answer. Can see editorial again.
+
+
+
+
+
+
+
+658CRDiv2
+B - Gaming question, Lots of thinking was required
+C - hard version is nice question, can see editorial again
+D - Nice question based on observation of input permutation and then using standard dp subset sum. In question
+like this see the pattern in input.(some basic technique can be fixxing max or min element).
+
+
+
+
+
+
+659 CR Div2
+Hard contest
+
+Couldnot solve single question during contest
+
+-- for a, trick is forming strings with largest possible length with all characters same, and changing them according to A[i] values
+-- c is nice string question
+
+-- Haven't upsolved other questions
+
+
+
+
+
+
+
+
+
+
+ER 92
+
+--c is brute force question, after obsertving property of answer
+--b is nice question using nice observation

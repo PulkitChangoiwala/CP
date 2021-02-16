@@ -1,0 +1,3 @@
+
+--c is brute force question, after obsertving property of answer
+--b is nice question using nice observation

@@ -1,0 +1,3 @@
+D
+We can use binary search to search over all possible answer (that is range of input values)
+with BS we can change lower bound and upper bound on the answer with keeping in mind constraint required to generate answer. 

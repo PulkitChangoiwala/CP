@@ -1,0 +1,14 @@
+
+Nice Contest. All problems are nice.
+
+B,D - Find the solution which is universal and easily achieveable.
+
+C-Element Extermination
+	-- Observing property of answer and arriving at conditions for possible answer.
+
+
+E-Inversion SwapSort
+	-- Nice question.
+	-- Maniers times you do not need actual array only the ordering of the elements. So array is reduced to array with elements with 1...N. 
+It simplifies how we arrive at solution.
+

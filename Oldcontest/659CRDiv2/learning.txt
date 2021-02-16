@@ -1,0 +1,8 @@
+Hard contest
+
+Couldnot solve single question during contest
+
+-- for a, trick is forming strings with largest possible length with all characters same, and changing them according to A[i] values
+-- c is nice string question
+
+-- Haven't upsolved other questions

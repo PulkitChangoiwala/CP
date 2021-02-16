@@ -1,0 +1,39 @@
+(Implementation, Constructive Algorithms)
+1333c.cpp
+-- Subarray Manipulation
+
+1324E.cpp
+-- Use DP. DP states dp(i,j) be the maximum number of good sleeping times if vova had a sleep i times already and the number of times he goes to sleep earlier by one hour is exactly j. ans = max(dp(n,j)) j from 0 to n
+
+This is standard type of dp state. i refers to iteration number(we are making choice i th time) and j represents total number time A (or B) is chosen from two choices (A,B)
+Refer to question for more clarity
+
+1313B.cpp
+
+1292B.cpp
+-- A good question
+-- Brute force with clever use of constratins given on input to reduce the large set
+of possible answers
+
+1268A.cpp
+-- Large integers. Used as string.
+
+1278C.cpp
+-- A Good Question. Must Read. 
+-- Optimisig brute force using maps.
+
+1280A.cpp
+1254A.cpp
+
+1203D2.cpp
+-- A nice question of string
+-- Question: string t is subsequence of string s.
+find max possible substring s.t even after it's removal from s, t will be subsequence of new s.
+-- O(n3) reduced to O(n2) reduced to O(n), see solution
+-- Basic logic, find leftmost, rightmost occurence of t in s.
+-- Now three case substring to be removed is in right, left or in middle. Check for them.
+
+
+
+1118E.cpp
+-- Whenever their are freedom to find answer in any way(no max, min condition). Choose the universal way of arriving at answer

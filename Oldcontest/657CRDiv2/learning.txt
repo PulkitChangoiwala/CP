@@ -1,0 +1,6 @@
+Couldn't solve single question during contest
+
+A- Nice brute force implementation
+B- require mathemaical thinking
+C- Nice question on observing some propery of answer, then using
+binary  search finding the answer. Can see editorial again.

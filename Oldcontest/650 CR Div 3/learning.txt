@@ -1,0 +1,22 @@
+from c:
+To accomodate base cases around indices 0 and n-1 we theoretically expands the array on both sides, constraining it to the given conditions.
+This helps us to solve base cases in similar way as general cases.
+
+
+from e:
+
+1)
+for making an array of 'n' number k-cyclic we need to place same elements at gcd(n,k) apart.
+Thus we need e = n/gcd(n,k) elements of the same type. And let there be such 'g' groups then 
+if g*e >=n (i.e. total number of elements which can be divided in group of 'e' same  elements) 
+then array can be k-cyclic.
+
+2) STL function for gcd is __gcd(a,b)
+
+
+from f1:
+
+--> When sorting and asking number of swaps then we can look for LIS of given array which is sorted.
+--> Here instead of actual value only ordering matters so we reduce the array A to A' with values from 
+0 to n-1. Keeping the ordering.
+ 
