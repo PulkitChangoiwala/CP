@@ -17,7 +17,7 @@ Learnings:
 	- Variant of Djikstra, Print k shortest path length, ::: 13_Flight_Routes.cpp
 
 
-bv c 
+- bellaman Ford
 	- TC: O(n*m)
 	- Works with directed graph and undirected graphs with positive weights, as in undirected graphs with negative weights it can detect false negative cycles.
 	- Detect negative cycle
