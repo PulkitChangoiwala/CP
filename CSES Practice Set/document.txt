@@ -1,0 +1,30 @@
+Learnings:
+
+
+- Print a cycle in simple graph ::: 6_Round_Trip.cpp
+
+
+- Given a n*m grid, with k post offices on the grid, and n*m-k houses on other locations, find closest post office to a house.
+	::::::: Use BFS, with all post office coordinates pushed in the first iteration itself  ::: 7_Monsters.cpp
+
+
+
+- Djikstra
+	- Time Complexity: O(V + ElogV)
+	- Eg Question ::: 8_Shortest_Route_1.cpp
+	- Djikstra with sets is more efficient than with priority queues
+	- Does not work with negative weight edges
+	- Variant of Djikstra, Print k shortest path length, ::: 13_Flight_Routes.cpp
+
+
+bv c 
+	- TC: O(n*m)
+	- Works with directed graph and undirected graphs with positive weights, as in undirected graphs with negative weights it can detect false negative cycles.
+	- Detect negative cycle
+	- Print negative cycles ::: 12_cycle_finding.cpp
+	- Check If A Cycle Lies in path between two nodes ::: 10_High_Score.cpp
+
+
+- Floyad Warshaall
+	- TC: O(n^3)
+	- Eg Question ::: 9_Shortest_Route_2.cpp
