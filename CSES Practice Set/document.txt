@@ -11,7 +11,7 @@ Learnings:
 
 - Djikstra
 	- Time Complexity: O(V + ElogV)
-	- Eg Question ::: 8_Shortest_Route_1.cpp
+	- Eg Question ::: 8_Shortest_Route_1.cpp  or 11_Flight_Discount.cpp
 	- Djikstra with sets is more efficient than with priority queues
 	- Does not work with negative weight edges
 	- Variant of Djikstra, Print k shortest path length, ::: 13_Flight_Routes.cpp
@@ -20,6 +20,8 @@ Learnings:
 - bellaman Ford
 	- TC: O(n*m)
 	- Works with directed graph and undirected graphs with positive weights, as in undirected graphs with negative weights it can detect false negative cycles.
+	- dis[u]!=inf && dis[v] > dis[u]+w 
+		Note: We need dis[u]!=inf because we are estimating inf by taking a large value, not real infinity, thus (inf + constant) is a defined value, thus the 'if' block will run if distance of node 'u' has distance infinity. 
 	- Detect negative cycle
 	- Print negative cycles ::: 12_cycle_finding.cpp
 	- Check If A Cycle Lies in path between two nodes ::: 10_High_Score.cpp

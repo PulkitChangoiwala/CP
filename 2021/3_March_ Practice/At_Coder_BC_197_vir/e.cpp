@@ -33,9 +33,42 @@ const int mod1= 998244353;
 
 
 
-
-void solve(){ 
 	
+void solve(){ 
+	int n;
+	cin>>n;
+	vector<int> c_mn(n+1, 1e9+1), c_mx(n+1, -1e10);
+	int x,c;
+	int N = 0;
+	fr(i,0,n){
+		cin>>x>>c;
+		N = max(N,c);
+		c_mn[c] = min(c_mn[c],x);
+		c_mx[c] = max(c_mx[c],x);
+	}	
+
+	int dp[2][2];
+
+	dp[1][0] = dp[0][0] = 0;
+	dp[1][1] = dp[0][1] = 0;
+	c_mn[0] = 0; c_mx[0] = 0;
+
+	fr(i,1,N+1){
+
+		if(c_mn[i]!=1e9+1){
+			dp[1][0] = min(dp[0][0]+ abs(c_mx[i]-c_mn[i-1]),  dp[0][1]+abs(c_mx[i]-c_mx[i-1])) + c_mx[i] - c_mn[i];
+			dp[1][1] = min(dp[0][0]+ abs(c_mn[i]-c_mn[i-1]),  dp[0][1]+abs(c_mn[i]-c_mx[i-1])) + c_mx[i] - c_mn[i];
+		}
+		else {
+			c_mn[i] = c_mn[i-1];
+			c_mx[i] = c_mx[i-1];
+		}
+		dp[0][0] = dp[1][0];
+		dp[0][1] = dp[1][1];
+	}
+	dp[1][0] +=  abs(c_mn[N]-0);
+	dp[1][1] +=  abs(c_mx[N]-0);
+	p1(min(dp[1][0], dp[1][1]));
 
 return;} // solve ends 
 
