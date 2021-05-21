@@ -35,8 +35,61 @@ const int mod1= 998244353;
 
 
 void solve(){ 
-		
+	int n,m;
+	cin >> n >> m;
+	int x;
+	v(v(int)) b(n, v(int)(m));
+	multiset<int> s;
+	int ct = 0;
+	fr(i,0,n){
+		fr(j,0,m){
+			cin >> x;
+			b[i][j] = x;
+			if(ct == m){
+				s.insert(x);
+				s.erase(prev(s.end()));
+			}
+			else if(ct<m){
+				s.insert(x);
+				ct++;
+			}
+		}
+	}
+	
+	vector<bool> vis(m,false);	
+	vector<vector<bool>> vis1(n, v(bool)(m,false));
+	v(v(int)) ans(b);
+	int mn = 0;
+	fr(i,0,n){
+		fr(j,0,m){	
+			if(mn == m) break;
+			if(s.find(ans[i][j])!=s.end() && !vis1[i][j]){ //this is some minimum element			
+				{
+					vis[mn] = true;
+					
+					if(mn > j && s.find(ans[i][mn]) != s.end()){
+						s.erase(s.find(ans[i][mn]));
+						vis1[i][mn] = true;
+						mn++;
+						j--;
+						continue;
+					
+					}
+					s.erase(s.find(ans[i][j]));
+					swap(ans[i][mn],ans[i][j]);
+					vis1[i][mn] = true;
+					mn++;
+					
+				}
+			}
+			
+		}
+		if(mn == m) break;
+	}
 
+	fr(i,0,n){
+		debug_arr(ans[i]);
+	}
 return;} // solve ends 
 
 
@@ -44,6 +97,7 @@ return;} // solve ends
 signed main() {
 	// your code goes here
 	fast
+	int t; cin>>t; while(t--)
 	{solve();}
 	
 	return 0;

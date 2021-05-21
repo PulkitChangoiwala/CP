@@ -1,0 +1,68 @@
+Learnings:
+
+
+- Print a cycle in simple graph ::: 6_Round_Trip.cpp
+
+
+- Given a n*m grid, with k post offices on the grid, and n*m-k houses on other locations, find closest post office to a house.
+	::::::: Use BFS, with all post office coordinates pushed in the first iteration itself  ::: 7_Monsters.cpp
+
+
+
+- Djikstra
+	- Time Complexity: O(V + ElogV)
+	- Eg Question ::: 8_Shortest_Route_1.cpp  or 11_Flight_Discount.cpp
+	- Djikstra with sets is more efficient than with priority queues
+	- Does not work with negative weight edges
+	- Variant of Djikstra, Print k shortest path length, ::: 13_Flight_Routes.cpp
+
+
+- bellaman Ford
+	- TC: O(n*m)
+	- Works with directed graph and undirected graphs with positive weights, as in undirected graphs with negative weights it can detect false negative cycles.
+	- dis[u]!=inf && dis[v] > dis[u]+w 
+		Note: We need dis[u]!=inf because we are estimating inf by taking a large value, not real infinity, thus (inf + constant) is a defined value, thus the 'if' block will run if distance of node 'u' has distance infinity. 
+	- Detect negative cycle
+	- Print negative cycles ::: 12_cycle_finding.cpp
+	- Check If A Cycle Lies in path between two nodes ::: 10_High_Score.cpp
+
+
+- Floyad Warshaall
+	- TC: O(n^3)
+	- Eg Question ::: 9_Shortest_Route_2.cpp
+
+
+- Toplogical Sorting
+	- Maximum number of edges between two nodes ::: Longest_Flight_Route.cpp
+
+
+
+- DP & Graph
+	- Total number of minimum paths in graph; minimum number of edges in minimum weight path; maximum number of edges in minimum weight path ::: Investigation.cpp
+
+- Binary Lifting:
+	- Process queries in O(logn) using O(n logn preprocessing)
+	- ::: Planet_Queries_1.cpp *
+	- ::: Planet_Queries_2.cpp ***
+
+
+- Prim's Algorithm
+	- To find MST
+	- It works only on undirected graphs. Graph can contain negative edges or cycle anything.
+	- Similar to Djikstra
+	- ::: Road_Preparation.cpp
+
+
+- Directed Graph
+	- Detect if every vertex is reachable from and to other vertex in O(n)
+		- ::: Flight_Routes_Check.cpp
+
+	- Kosaraju Algorithm
+		- Find strongly connected components in O(n)
+		- DFS traversal on the graph and note tout time of every node.
+		- tout_sc1 < tout_sc2 <==> there is an edge from sc2 to sc1
+		- Thus, sc(i.e. strongly connected component) with the highest tout time is not reachable from any other sc.
+		- Reverse the graph
+		- Now sc with highest tout time in original graph will not go outside in the reversed graph.
+		- Thus do dfs traversal in the reversed graph, starting from nodes with highest tout time in original graph.
+		- ::: Planets_And_Kingdoms.cpp

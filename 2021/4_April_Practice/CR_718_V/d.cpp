@@ -1,10 +1,7 @@
 
-
-
-
 #include <bits/stdc++.h>
 using namespace std;
-//#define int long long
+#define int long long
 #define ll long long 
 #define fr(i,s,e) for(int i=s;i<e;++i)
 #define fr1(i,s,e) for(int i=s;i>e;--i)
@@ -20,8 +17,9 @@ using namespace std;
 #define pb push_back
 #define f first
 #define s second
-
-void dubug_arr(vector<int> &a){
+#define endl "\n"
+#define fast ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);	
+void debug_arr(vector<int> &a){
 	int len = a.size();
 	fr(i,0,len){
 		cout<<a[i]<<" ";
@@ -32,74 +30,124 @@ void dubug_arr(vector<int> &a){
 
 const int  mod = 1e9 +7;
 const int mod1= 998244353;
-int n;
-/********************* SEGMENT TREE **************************/
+int inf = 1e16;
+int n,m,k;
+vector<vector<int>> dis;
+vector<int> X = {1,0,-1,0};
+vector<int> Y = {0,1,0,-1};
+vector<vector<int>> j_j1;
+vector<vector<int>> i_i1;
 
-vector<int> tree; //resize when needed
-void build( ){
-fr1(i,n-1,0) tree[i] = tree[i<<1] + tree[i<<1 | 1];
-//= tree[i] = tree[2*i] + tree[2*i+1]
+int weight(int x, int y, int i, int j){
+	if(x==i){
+		return j_j1[i][min(y,j)];
+	}
+	else {
+		return i_i1[min(x,i)][j];
+	}
 }
 
-void modify(int p, int value){
-	for(tree[p+=n]=value; p>1; p>>=1)
-			tree[p>>1] = tree[p]+tree[p^1]; //modify parent value
+void calculate(){
+	//calculates shortest weigh distance from x,y with k edges
+	dis.resize(n+1, vector<int>(m+1, 0));
+	vector<vector<int>> dis1(n+1, vector<int>(m+1, inf));
+	for(int it=1; it<=k; ++it){
+		for(int x1 = 1; x1 <=n ;++x1){
+			for(int y1 =1; y1<=m; ++y1){
+				for(int i=0; i<4;++i){					
+					int x = x1 + X[i];
+					int y = y1 + Y[i];
+					if(x<=0 || y<=0 || x>n || y>m) continue;
+					dis1[x][y] = min(dis1[x][y], dis[x1][y1] + weight(x,y,x1,y1));
+				}
+			}
+		}
+		dis = dis1;
+		dis1.assign(n+1, vector<int>(m+1, inf));
+	}
 }
 
-int query(int l,int r ){
-int res=0;	
-for(l+=n,r+=n;  l<r;  r>>=1,l>>=1){
-	if(l&1) res= res+tree[l++];
-	if(r&1) res= res+tree[--r];
-}
-return res;
-}
+/*void djikstra(int xs, int ys){
+
+	set<pair<int,pair<int,pair<int,int>>>> st;
+	dis.clear();
+	dis.resize(n+1, vector<int>(m+1, inf));
+	
+	st.insert({0,{xs,{ys,0}}});
+	
+	while(!st.empty()){
+		auto it = st.begin();
+		int dis_ = (*it).first;
+		int x1 = (*it).second.first;
+		int y1 = (*it).second.second.first;
+		int steps = (*it).second.second.second;
+		st.erase(it);
+		if(x1 == xs && y1 == ys && steps == k){
+			dis[x1][y1] = dis_;
+			return;
+		}
+		
 
 
-//#################### Lazy Propagation #########################
+		if(steps<=k)
+		for(int i=0; i<4;++i){
+			int x = x1 + X[i];
+			int y = y1 + Y[i];
+		
+			if(x<=0 || y<=0 || x>n || y>m){
+				continue;
+			}
+
+			int wt =  weight(x,y,x1, y1);
+			st.insert({dis_+wt, {x,{y,steps+1}}});
+
+		}	
+	}
 
 
-
-
-
-
-
-
-
-/********************* SEGMENT TREE **************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}*/
 
 void solve(){ 
-   
-   pr p ={1,2};
-   cout<<p.f<<" "<<p.s<<endl;
-   pr1(char,char) p1= {'a','b'};
+	cin >> n >> m >> k;
+	j_j1.resize(n+1,vector<int>(m+1));
+	i_i1.resize(n+1,vector<int>(m+1));
+	fr(i,1,n+1){
+		fr(j,1,m){
+			cin >> j_j1[i][j];
+		}
+	} 
+	fr(i,1,n){
+		fr(j,1,m+1){
+			cin >> i_i1[i][j];
+		}
+	}
+	if(k&1) 
+	fr(i,1,n+1){
+		fr(j,1,m+1){
+			cout << -1 <<" ";
+		}
+		cout << endl;
+	}	
+	else
+	{	k/=2;
+		calculate();
+		fr(i,1,n+1){
+				fr(j,1,m+1){
+					//djikstra(i,j);  // == O(n*m*k), Total = O(n*m*n*m*k), High TC
+					cout << 2*dis[i][j] <<" ";
+				}
+				cout << endl;
+			}
+	}
 
-   cout<<p1.f<<" "<<p1.s<<endl;  
-  
-  return;} // solve ends 
+return;} // solve ends 
 
 
 
 signed main() {
 	// your code goes here
-	int t; cin>>t; while(t--)
+	fast
+	//int t; cin>>t; while(t--)
 	{solve();}
 	
 	return 0;
@@ -212,8 +260,4 @@ ___________________▄▄▄▀▀▀▀▀▀▀▄
 
 
  */
-
-
-
-
 
