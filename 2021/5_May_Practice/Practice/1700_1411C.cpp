@@ -31,31 +31,43 @@ void debug_arr(vector<int> &a){
 const int  mod = 1e9 +7;
 const int mod1= 998244353;
 
-
-
+vector<int> parent,sze;
+vector<bool> isCycle;
+int find(int a){
+	while(parent[a]!=a) a = parent[a];
+	return a;
+}
+void unite(int a, int b){
+	if(a==b) return;
+	a = find(a);
+	b = find(b);
+	if(sze[b]>sze[a]) {swap(a,b);}
+	if(a==b){isCycle[a] = true; return;}
+	parent[b] = a;
+	sze[a] += sze[b];
+	sze[b]=0;
+	return;
+}
 
 void solve(){ 
 	int n, m , x, y, cnt = 0;
 	cin >> n >> m;
-	vector<bool> row(n+1,true), col(n+1,true);
-	fr(i,0,m) {
+	parent.clear(); sze.clear(); isCycle.clear();
+	parent.resize(n+1); sze.resize(n+1,1); isCycle.resize(n+1,false);
+	iota(parent.begin(),parent.end(),0);
+   // debug_arr(parent);
+	fr(i,0,m){
 		cin >> x >> y;
-		if(x!=y) cnt++;
-		row[x] = false; 
-		col[y] = false;
+		unite(x,y);
 	}
-	if(cnt==0) {
-		p1(0);
+  //debug_arr(parent);
+	int ans = 0;
+	fr(i,1,n+1){
+		if(sze[i]<=1) {}
+		else if(isCycle[i]) {ans+=sze[i]+1;}
+		else ans+=sze[i]-1;
 	}
-	else {
-		fr(i,1,n+1){
-			if(row[i] != col[i]){
-				p1(cnt);
-				return;
-			}
-		}
-		p1(cnt+1);
-	}
+	p1(ans);
 
 return;} // solve ends 
 
