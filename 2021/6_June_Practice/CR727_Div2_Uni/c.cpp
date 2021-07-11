@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -44,16 +43,23 @@ void solve(){
     fr(i,1,n){ if(a[i]-a[i-1]>x) b.pb(a[i]-a[i-1]);}
     sort(b.begin(), b.end());
     // p1(b.size()+1);
-    int i=0,m=2,mt=1;;
-    while(k-mt>=0 && i < b.size()){
-        while(k-mt>=0 && i<b.size() && b[i]<=m*x){
-            i++; k -= mt; 
-        }
-        mt++;
-        m++;
+    int i = 0;
+ 
+    // debug_arr(b);
+    for(auto &el : b){
+        // cout<<el<<" "<<k<<endl;
+        
+        long double temp = ((long double)el)/((long double)x);
+        int tt = ceil(temp);
+        tt--;
+        // cout<<tt<<endl;
+        k = k - tt ;
+        
+        if(k>=0)i++;
+        else break;
     }
-    int t1 = b.size()-i;
-    int tmp = max(t1, 0ll);
+    
+    int tmp = b.size()-i;
     p1(tmp+1);
 
 return;} // solve ends 
@@ -176,4 +182,4 @@ ___________________▄▄▄▀▀▀▀▀▀▀▄
 
 
  */
-
+ 
