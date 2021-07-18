@@ -89,13 +89,25 @@ void solve(){
 
 		sort(all(indices));
 		sort(all(elem));
-		// debug_arr(indices);
-		// debug_arr(elem);
 		int j = 0, rr = elem.size()-1;
 		for(auto i : indices){
-			if(elem[j] == i) {b[i]=elem[rr]; rr--;}
-			else {b[i] = elem[j]; j++;}
+			b[i] = elem[j]; j++;
 		}
+		
+	
+		if(indices[0]+1 == b[indices[0]]){
+			swap(b[indices[0]], b[indices[1]]);
+		}
+		
+		for(int k=1; k<indices.size();++k){
+			int i = indices[k];
+			if(i+1 == b[i]){
+				int ttt = b[indices[0]];
+				b[indices[0]]  = b[i];
+				b[i] = ttt;
+			}
+		}
+
 	}
 
 	debug_arr(b);
