@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -45,34 +44,38 @@ i wants to gift to a[i]
 void solve(){ 
 	int n; cin >> n;
 	v(int) a(n), b(n), cnt(n+1);
+
 	fr(i,0,n) {cin >> a[i]; cnt[a[i]] = 1;}
+
 	int unique = accumulate(cnt.begin(), cnt.end(),0);
-	if(unique==n-1){
+	if(unique == n){
+	    p1(n);
+	    b = a;
+	}
+	else if(unique==n-1){
 		p1(n-1);
 		int el = 0, i1=0, i2 =0, el1 = 0;
 		b = a;
 		for(int i=1; i<=n; ++i) if(cnt[i]==0) el = i;
-		// assign(all(cnt),0);
 		cnt.assign(n+1,0);
-		for(int i=0; i<n; ++i) { cnt[b[i]]++;
+		for(int i=0; i<n; ++i) { 
+			cnt[b[i]]++;
 			if(cnt[b[i]]==2) el1 = b[i];
 		}
-
 		for(int i=0; i<n; ++i) {
 			if(a[i]==el1){
 				if(i1!=0) i2 = i+1;
 				else i1 = i+1; 
 			}
 		}
-		// debug_arr(b);
-		// p4(i1,i2,el1, el);
 		if(i1 == el ) b[i2-1] = el;
 		else b[i1-1] = el; 
+// 		p2(i2,i1);
 	}
 	else {
 		p1(unique);
 		vector<int> elem, indices;
-		// debug_arr(cnt);
+
 		for(int i=0; i<n; ++i){
 			if(cnt[a[i]]==1) {
 				b[i] = a[i]; cnt[a[i]] = -1;
@@ -89,6 +92,7 @@ void solve(){
 
 		sort(all(indices));
 		sort(all(elem));
+		assert(elem.size()==indices.size());
 		int j = 0, rr = elem.size()-1;
 		for(auto i : indices){
 			b[i] = elem[j]; j++;
@@ -152,4 +156,4 @@ Code belongs to:
 
 
  */
-
+ 

@@ -69,23 +69,25 @@ void solve(){
 	// p2(ca,cb);
 
 	int cnt = 0, tt = n-(n - n/4);
-	int tmpi = tt-1;
-	for(int i=n-(n - n/4); i<=n-1; ++i){
+	int tmpi = tt-1, N=n;
+	for(int i=N-(N - N/4); i<=N-1; ++i){
 		if(ca>=cb) {p1(cnt); return;}
 		int rem = 3 - n%4;
-		n += rem;	
+			
 		for(int j=1; j<=rem;++j){
 			cnt++;
 			ca += 100;
-			cb += (tmpi>=0 && tmpi < n ?b[tmpi--]:0);
+			cb += (tmpi>=0 && tmpi < N ?b[tmpi]:0);
+			tmpi--;
 			if(ca >= cb) {p1(cnt); return;}
+			n++;
 		}
 				
 		n++;
 		ca -= a[i];
 		ca += 100;
-		cb -= (tmpi>=0 && tmpi < n ?b[tmpi]:0);
-		tmpi++;
+// 		cb -= (tmpi>=0 && tmpi < N ?b[tmpi]:0);
+// 		tmpi++;
 		cnt++;
 		if(ca>=cb) {p1(cnt); return;} 
 
