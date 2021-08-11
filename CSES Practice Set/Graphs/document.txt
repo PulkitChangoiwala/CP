@@ -19,9 +19,11 @@ Learnings:
 
 - bellaman Ford
 	- TC: O(n*m)
-	- Works with directed graph and undirected graphs with positive weights, as in undirected graphs with negative weights it can detect false negative cycles.
+	- Works with directed graph and undirected graphs. It works only with positive weights, 
+		(because in undirected graphs with negative weights it can detect false negative cycles)
 	- dis[u]!=inf && dis[v] > dis[u]+w 
-		Note: We need dis[u]!=inf because we are estimating inf by taking a large value, not real infinity, thus (inf + constant) is a defined value, thus the 'if' block will run if distance of node 'u' has distance infinity. 
+		Note: We need dis[u]!=inf because we are estimating inf by taking a large value, not real infinity, thus (inf + constant) is a defined value, 
+		thus the 'if' block will run if distance of node 'u' has distance infinity. 
 	- Detect negative cycle
 	- Print negative cycles ::: 12_cycle_finding.cpp
 	- Check If A Cycle Lies in path between two nodes ::: 10_High_Score.cpp
@@ -38,7 +40,9 @@ Learnings:
 
 
 - DP & Graph
-	- Total number of minimum paths in graph; minimum number of edges in minimum weight path; maximum number of edges in minimum weight path ::: Investigation.cpp
+	- Total number of minimum paths in graph; 
+	minimum number of edges in minimum weight path; 
+	maximum number of edges in minimum weight path ::: Investigation.cpp
 
 - Binary Lifting:
 	- Process queries in O(logn) using O(n logn preprocessing)
@@ -48,7 +52,8 @@ Learnings:
 
 - Prim's Algorithm
 	- To find MST
-	- It works only on undirected graphs. Graph can contain negative edges or cycle anything.
+	- It works only on undirected graphs. 
+		Graph can contain negative edges or cycle anything.
 	- Similar to Djikstra
 	- ::: Road_Preparation.cpp
 
