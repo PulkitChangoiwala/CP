@@ -38,7 +38,7 @@ const int mod1= 998244353;
 #endif
 
 void _print(ll t) {cerr << t;}
-// void _print(int t) {cerr << t;}
+//void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
 void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
@@ -56,7 +56,7 @@ template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i
 template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
 template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
-
+/*
 
 int ad(int a, int b){
 	a = (a+mod)%mod;
@@ -105,48 +105,172 @@ struct Combo {
     }
 };
 
-
-
-
-//dp based solution 
-/*
-	Let's decide over ith bit
-
-	- if ith bit of all n numbers is set, and n is even then moamen wins
-	- else if ith bit , contains even number of ones, then it is not decidable yet
-		decide from next bit
-	- Loses if odd numbers of ones, with atleast one zero
 */
-void solve(){
-	int n,k;
-	cin >> n >> k;
-	Combo c(n+1);
-	v(int) dp(k+1);
 
-	int var = 0;
-	for(int i=0; i<=n-1; ++i){
-		if(i%2==0){
-			var = ad(var, c.choose(n,i));
+
+/***** Range incre update, range maximum query ******/ 
+/********
+ Syntax:
+ 	n => number of elements in array
+ 	t => segment tree (with size 4*n)
+ 	lazy => lazy tree (with size 4*n)
+
+ Terminology of function parameters
+ 	arr -> array for SGT to be built
+ 	st  -> start index of the interval of arr for which SGT to be build
+ 	end -> end index ------------- ---------------- 
+	tl  -> start index of tree interval
+	tr  -> end index of tree interval
+ 	root -> node representing the interval [tl, tr] in SGT
+
+ ********/
+vector<int> dp1;
+class ST {
+	
+	int n;
+	vector<pr> t;
+	vector<pr> lazy;
+public:
+	ST(int n) {
+		this->n = n; 
+		t.resize(4*n, {0,-1}); 
+		lazy.resize(4*n, {0,-1}); 
+	}
+
+	void build(int st, int end, vector<int>&arr, int root = 1){
+		if(st==end) {t[root] = {arr[st],st}; return;}
+		if(st>end) return;
+		int mid = st + (end-st)/2;
+		build(st, mid, arr, 2*root);
+		build(mid+1, end, arr, 2*root+1);
+		t[root] = t[2*root].first > t[2*root+1].first ? t[2*root] : t[2*root+1];
+	}
+
+	void push(int tl, int tr, int root){
+		if(lazy[root].first!=0){
+			t[root].first  = lazy[root].first;
+			t[root].second = lazy[root].ss;
+			if(tl!=tr){
+				lazy[2*root].ff    = lazy[root].ff;
+				lazy[2*root+1].ff  = lazy[root].ff;
+				lazy[2*root].ss = lazy[2*root+1].ss = lazy[root].ss;
+
+			}
+			lazy[root] = {0,-1};
 		}
 	}
 
-	dp[0] = 1;
-	for(int i=1; i<=k; ++i){
-		if(n%2==0)  {
-			int pw = c.power(2,n);
-			pw = c.power(pw,i-1);
-			dp[i] = ad(dp[i],pw); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
+	//incr update, i.e. each value is "val"
+	void update(int l, int r, int val, int ind, int tl, int tr, int root){
+		push(tl, tr, root);
+		if(l>r) return;
+		if(tl == l && tr == r){
+			lazy[root].first  = val;
+			lazy[root].second = ind;
+			push(tl, tr, root);
+			return;
 		}
-		else {
-			dp[i] = ad(dp[i],mul(1,dp[i-1])); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
+		int tm = (tl+tr)/2;
+		update(l,min(r,tm), val, ind, tl, tm, 2*root);
+		update(max(l,tm+1), r, val, ind, tm+1, tr, 2*root+1);
+		t[root] = t[2*root].first > t[2*root+1].first ? t[2*root] : t[2*root+1];
 	}
-	p1(dp[k]);
-	return;
+
+	pair<int,int> query(int l, int r, int tl, int tr, int root){
+		if(l>r) return {-1e9,-1}; // infinity value, should change according to the possible range of t[i]
+		push(tl, tr, root); //push of lazy tree
+		debug(mp(l,r)); debug(mp(tl,tr)); debug(t[root]);
+
+		if(l==tl && r == tr) {return t[root];}
+		int tm = tl + (tr-tl)/2;
+		pr q1 = query(l, min(r, tm), tl, tm, 2*root), q2 = query(max(l, tm+1), r, tm+1, tr, 2*root+1);
+		return q1.first > q2.first ? q1 : q2;
+	}
+
+};
+
+void coordinate_compression(vector<int> &a){
+    int n = a.size();
+    vector<pair<int, int>> pairs(n);
+    for(int i = 0; i < n; ++i) { pairs[i] = {a[i], i};}
+    sort(pairs.begin(), pairs.end());
+    int nxt = 0;
+    for(int i = 0; i < n; ++i) {
+	    if(i > 0 && pairs[i-1].first != pairs[i].first) nxt++;
+	    a[pairs[i].second] = nxt;
+    }
 }
 
+void solve(){ 
+	int n,m;
+	cin >> n >> m;
+	vector<vector<pair<int,int>>> segments(n);
+
+	fr(i,0,m){
+		int x,l,r; cin >> x >> l >> r;
+		segments[x-1].push_back({l,r});
+	}
+
+	vector<int> tmp;
+	fr(i,0,n){
+		for(auto p : segments[i]){
+			tmp.pb(p.ff);
+			tmp.pb(p.ss);
+		}
+	}
+	int j = 0, N = 0;
+	coordinate_compression(tmp);
+
+	fr(i,0,n){
+		for(auto &p : segments[i]){
+			p.ff = tmp[j++]; N = max(N,p.ff);
+			p.ss = tmp[j++]; N = max(N,p.ss);
+		}
+	}
+	tmp.clear();
+
+	ST sgt(N+1);
+	v(int) dp(n,-1);
+	dp1.resize(n,1);
+	fr(i,0,n){
+		int mxi = 0, mx = 0;
+		for(auto &p : segments[i]){
+			pr pp = sgt.query(p.ff, p.ss, 0, N, 1);
+			debug(pp);
+			if(pp.ss>=0 && dp1[i] < dp1[pp.ss]+1){
+				dp1[i] = dp1[pp.ss]+1;
+				dp[i] = pp.ss;
+			}
+		}
+
+		for(auto &p : segments[i])
+			sgt.update(p.ff, p.ss, dp1[i], i, 0, N, 1);
+
+	}
+
+	// pr pp = sgt.query(0,N,0,N,1);
+	debug(dp1);
+	debug(dp);
+	int st=0; 
+	fr(i,0,n) if(dp1[i]>dp1[st]) st = i;
+
+	p1(n-dp1[st]);
+	debug(st);
+	vector<bool> is(n,true);
+	while(st!=-1){
+		is[st] = false;
+		st = dp[st];
+	}
+
+	fr(i,0,n){
+		if(is[i]) cout<<i+1<<" ";
+	}
+	cout<<endl;
+
+
+
+
+return;} // solve ends 
 
 
 
@@ -159,9 +283,7 @@ signed main() {
 
 
 	auto start1 = chrono::high_resolution_clock::now();
-	int t = 1; 
-	cin>>t; 
-	while(t--)
+	
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>(stop1 - start1);

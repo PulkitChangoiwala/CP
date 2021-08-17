@@ -1,3 +1,12 @@
+int ad(int a, int b){
+    a = (a+mod)%mod;
+    b = (b+mod)%mod;
+    return (a+b)%mod;
+}
+int mul(int a, int b){
+    return (1ll*a*b)%mod;
+}
+
 struct Combo {
     vector<long long> facs;
     vector<long long> invfacs;

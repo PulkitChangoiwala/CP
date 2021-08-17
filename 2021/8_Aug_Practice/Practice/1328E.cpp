@@ -38,7 +38,7 @@ const int mod1= 998244353;
 #endif
 
 void _print(ll t) {cerr << t;}
-// void _print(int t) {cerr << t;}
+//void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
 void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
@@ -56,7 +56,7 @@ template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i
 template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
 template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
-
+/*
 
 int ad(int a, int b){
 	a = (a+mod)%mod;
@@ -105,48 +105,72 @@ struct Combo {
     }
 };
 
-
-
-
-//dp based solution 
-/*
-	Let's decide over ith bit
-
-	- if ith bit of all n numbers is set, and n is even then moamen wins
-	- else if ith bit , contains even number of ones, then it is not decidable yet
-		decide from next bit
-	- Loses if odd numbers of ones, with atleast one zero
 */
-void solve(){
-	int n,k;
-	cin >> n >> k;
-	Combo c(n+1);
-	v(int) dp(k+1);
 
-	int var = 0;
-	for(int i=0; i<=n-1; ++i){
-		if(i%2==0){
-			var = ad(var, c.choose(n,i));
+
+int n,m,timer;
+v(int) par, tin, tout, ht;
+v(v(int)) adj;
+
+void dfs(int s, int p, int d = 0){
+	par[s] = p;
+	ht[s] = d++;
+	tin[s] = ++timer;
+	for(auto v : adj[s]){
+		if(v!=p){
+			dfs(v,s,d);
 		}
 	}
-
-	dp[0] = 1;
-	for(int i=1; i<=k; ++i){
-		if(n%2==0)  {
-			int pw = c.power(2,n);
-			pw = c.power(pw,i-1);
-			dp[i] = ad(dp[i],pw); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-		else {
-			dp[i] = ad(dp[i],mul(1,dp[i-1])); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-	}
-	p1(dp[k]);
-	return;
+	tout[s] = ++timer;
 }
+bool isAnc(int u, int v){
+	return tin[u]<=tin[v] && tout[v] <= tout[u];
+}
+void solve(){ 
+	cin >> n >> m;
+	adj.clear();
+	adj.resize(n+1);
+	fr(i,0,n-1) {
+		int x,y;
+		cin >> x >> y;
+		adj[x].pb(y);
+		adj[y].pb(x);
+	}
+	timer=0;
+	tin.clear(); tout.clear(); par.clear(); ht.clear();
+	tin.resize(n+1); tout.resize(n+1); par.resize(n+1); ht.resize(n+1);
+	dfs(1, 1);
 
+	fr(i,0,m){
+		int sz; cin >> sz;
+		vector<int> v;
+		int deepest = 1;
+		fr(i,0,sz) {
+			int x; cin >> x;
+			x = par[x];
+			v.pb(x);
+			if(ht[x] > ht[deepest]) deepest = x;
+		}
+
+		int flag = true;
+		for(auto el : v){
+			if(!isAnc(el, deepest)) {
+				flag = false;
+				break;
+			}
+		}
+
+		
+
+
+		if(flag) p1("YES");
+		else p1("NO");
+
+	}
+
+
+
+return;} // solve ends 
 
 
 
@@ -159,9 +183,6 @@ signed main() {
 
 
 	auto start1 = chrono::high_resolution_clock::now();
-	int t = 1; 
-	cin>>t; 
-	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>(stop1 - start1);

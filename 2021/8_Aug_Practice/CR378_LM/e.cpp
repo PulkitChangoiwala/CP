@@ -28,8 +28,8 @@ typedef long long ll;
 typedef unsigned long long ull;
 typedef long double lld;
 
-const int  mod = 1e9 +7;
-const int mod1= 998244353;
+const int  mod1 = 1e9 +7;
+const int mod= 998244353;
 
 #ifndef ONLINE_JUDGE
 #define debug(x) cerr << #x <<" "; _print(x); cerr << endl;
@@ -38,7 +38,7 @@ const int mod1= 998244353;
 #endif
 
 void _print(ll t) {cerr << t;}
-// void _print(int t) {cerr << t;}
+//void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
 void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
@@ -66,7 +66,7 @@ int ad(int a, int b){
 int mul(int a, int b){
     return (1ll*a*b)%mod;
 }
-
+/*
 struct Combo {
     vector<long long> facs;
     vector<long long> invfacs;
@@ -105,48 +105,81 @@ struct Combo {
     }
 };
 
-
-
-
-//dp based solution 
-/*
-	Let's decide over ith bit
-
-	- if ith bit of all n numbers is set, and n is even then moamen wins
-	- else if ith bit , contains even number of ones, then it is not decidable yet
-		decide from next bit
-	- Loses if odd numbers of ones, with atleast one zero
 */
-void solve(){
-	int n,k;
-	cin >> n >> k;
-	Combo c(n+1);
-	v(int) dp(k+1);
 
-	int var = 0;
-	for(int i=0; i<=n-1; ++i){
-		if(i%2==0){
-			var = ad(var, c.choose(n,i));
-		}
+class Mobius{
+	int n;
+	vector<int> MU;
+	vector<int> primes;
+	vector<int> primeFactor;
+
+public: 
+	Mobius(int n){
+		this->n = n;
+		this->MU.resize(n+1,0);
+		this->primeFactor.resize(n+1,-1);		
+		calculateMobiusFunction();
 	}
 
-	dp[0] = 1;
-	for(int i=1; i<=k; ++i){
-		if(n%2==0)  {
-			int pw = c.power(2,n);
-			pw = c.power(pw,i-1);
-			dp[i] = ad(dp[i],pw); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
+	void calculateMobiusFunction(){
+		//using linear sieve method
+		MU[1] = 1;
+		primeFactor[1] = 1;
+		for(int i=2; i<=n; ++i){
+			if(primeFactor[i]==-1) {MU[i] = -1; primes.push_back(i); primeFactor[i]=i;}
+			for(int j=0; j<primes.size() && primes[j]*i<=n; ++j){
+				primeFactor[primes[j]*i] = primes[j];
+				if(i%primes[j]==0) break;
+				MU[primes[j]*i] = MU[primes[j]]*MU[i];
+			}
 		}
-		else {
-			dp[i] = ad(dp[i],mul(1,dp[i-1])); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
+
 	}
-	p1(dp[k]);
-	return;
+
+	int mu(int n){
+		return MU[n];
+	}
+};
+
+int calculate(int n, vector<int> &l, vector<int>&r, int sum){
+	//number of ways of choosing exactly n numbers which add upto s <= sum
+	//ith number 1<=l[i]<=a[i]<=r[i]
+	//prefix sum dp, with O(n*sum) complexity
+	vector<int> dp(sum+1,1); //prefix-sum dp 
+
+	for(int i=0; i<n; ++i){
+		if(l[i] > r[i]) return 0; //ith element can't be chosen, no possible answer
+		for(int s=sum; s>=0; --s){
+			dp[s] = (mod 
+				+ (s-l[i]<0  ? 0 : dp[s-l[i]]) 
+				- (s-r[i]<=0 ? 0 : dp[s-r[i]-1]))%mod;
+		}
+		for(int s=1; s<=sum; ++s) dp[s] = (dp[s]+dp[s-1])%mod;	//prefix sum	
+	}
+
+	return dp[sum];
 }
+void solve(){ 
+	int n,m;
+	cin >> n >> m;
+	v(int) l(n), r(n);
 
+	fr(i,0,n) cin >> l[i] >> r[i];
+
+	int ans = 0;
+	Mobius mm(m+1);
+
+	for(int d=1; d<=m; ++d){ //using mobius inversion
+		vector<int> L(l), R(r);
+		for(auto &var : L) var = (var+d-1)/d;
+		for(auto &var : R) var = var/d;
+		ans = ad(ans, mul(ad(mm.mu(d),mod), calculate(n,L,R,(m/d))));
+	}
+
+	p1(ans);
+
+
+return;} // solve ends 
 
 
 
@@ -159,9 +192,6 @@ signed main() {
 
 
 	auto start1 = chrono::high_resolution_clock::now();
-	int t = 1; 
-	cin>>t; 
-	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>(stop1 - start1);

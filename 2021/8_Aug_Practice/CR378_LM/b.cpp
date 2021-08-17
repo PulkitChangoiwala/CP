@@ -38,7 +38,7 @@ const int mod1= 998244353;
 #endif
 
 void _print(ll t) {cerr << t;}
-// void _print(int t) {cerr << t;}
+//void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
 void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
@@ -56,7 +56,7 @@ template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i
 template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
 template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
-
+/*
 
 int ad(int a, int b){
 	a = (a+mod)%mod;
@@ -105,48 +105,45 @@ struct Combo {
     }
 };
 
-
-
-
-//dp based solution 
-/*
-	Let's decide over ith bit
-
-	- if ith bit of all n numbers is set, and n is even then moamen wins
-	- else if ith bit , contains even number of ones, then it is not decidable yet
-		decide from next bit
-	- Loses if odd numbers of ones, with atleast one zero
 */
-void solve(){
-	int n,k;
-	cin >> n >> k;
-	Combo c(n+1);
-	v(int) dp(k+1);
 
-	int var = 0;
-	for(int i=0; i<=n-1; ++i){
-		if(i%2==0){
-			var = ad(var, c.choose(n,i));
-		}
+int count(string &s){
+	int ans = 0,n = s.length();
+	fr(i,1,n){
+		if(s[i]==s[i-1]) ans++;
 	}
-
-	dp[0] = 1;
-	for(int i=1; i<=k; ++i){
-		if(n%2==0)  {
-			int pw = c.power(2,n);
-			pw = c.power(pw,i-1);
-			dp[i] = ad(dp[i],pw); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-		else {
-			dp[i] = ad(dp[i],mul(1,dp[i-1])); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-	}
-	p1(dp[k]);
-	return;
+	return ans;
 }
 
+void solve(){ 
+	int n; cin >> n;
+	string s; cin>>s;
+	int ans =0;
+	string t1 = s, t2 = s;
+	if(t1[0]!='?'){
+		fr(i,1,n){
+			if(t1[i]!='?') continue;
+			t1[i] = (t1[i-1]=='B')?'R':'B';
+		}
+		// p1(count(t1));
+		p1(t1);
+		return;
+	}
+	t1[0] = 'R';
+	fr(i,1,n){
+		if(t1[i]!='?') continue;
+		t1[i] = (t1[i-1]=='B')?'R':'B';
+	}
+	t2[0] = 'B';
+	fr(i,1,n){
+		if(t2[i]!='?') continue;
+		t2[i] = (t2[i-1]=='B')?'R':'B';
+	}
+	debug(t1); debug(t2);
+	int a = count(t1), b = count(t2); 
+	if(a<b) p1(t1);
+	else p1(t2);
+return;} // solve ends 
 
 
 

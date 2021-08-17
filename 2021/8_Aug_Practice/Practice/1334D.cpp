@@ -38,7 +38,7 @@ const int mod1= 998244353;
 #endif
 
 void _print(ll t) {cerr << t;}
-// void _print(int t) {cerr << t;}
+//void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
 void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
@@ -56,7 +56,7 @@ template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i
 template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
 template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
-
+/*
 
 int ad(int a, int b){
 	a = (a+mod)%mod;
@@ -105,48 +105,44 @@ struct Combo {
     }
 };
 
-
-
-
-//dp based solution 
-/*
-	Let's decide over ith bit
-
-	- if ith bit of all n numbers is set, and n is even then moamen wins
-	- else if ith bit , contains even number of ones, then it is not decidable yet
-		decide from next bit
-	- Loses if odd numbers of ones, with atleast one zero
 */
-void solve(){
-	int n,k;
-	cin >> n >> k;
-	Combo c(n+1);
-	v(int) dp(k+1);
 
-	int var = 0;
-	for(int i=0; i<=n-1; ++i){
-		if(i%2==0){
-			var = ad(var, c.choose(n,i));
-		}
+/*
+lexicographically smalles
+n = 5
+1 2 1 3 1 4 1 5 (2 3 2 4 2 5 (3 4 3 5 (4 5))) 1
+*/
+vector<int> ans;
+void cal(int s, int n, int l, int r, int curr){
+	if(l>r || curr > r) return;
+	if(l>(2ll*(n-s)+curr)) { 
+		return cal(s+1,n,l,r,(2*(n-s)+curr)); 
 	}
-
-	dp[0] = 1;
-	for(int i=1; i<=k; ++i){
-		if(n%2==0)  {
-			int pw = c.power(2,n);
-			pw = c.power(pw,i-1);
-			dp[i] = ad(dp[i],pw); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-		else {
-			dp[i] = ad(dp[i],mul(1,dp[i-1])); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
+	//this segment is (s, s+1) (s, s+2) (s, s+3) ... (s, s+n-s)
+	if(s==n){
+		ans.push_back(1);
+		return;
 	}
-	p1(dp[k]);
-	return;
+	for(int i=0; i<2*(n-s);++i){
+		if(curr==l && curr <=r){
+			debug(i);
+			int num = (i%2==0) ? s : s + ((i+1)/2);
+			ans.push_back(num);
+			curr++;
+			l++;
+		}
+		else curr++;
+	}
+	if(l<=r) cal(s+1,n,l,r,curr); 
 }
-
+void solve(){ 
+	int n,l,r;
+	cin >> n >>  l >> r;
+	ans.clear();
+	cal(1,n,l,r,1);
+	for(auto el : ans) cout<<el<<" ";
+	cout<<endl; 
+return;} // solve ends 
 
 
 

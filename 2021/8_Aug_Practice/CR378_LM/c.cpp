@@ -38,7 +38,7 @@ const int mod1= 998244353;
 #endif
 
 void _print(ll t) {cerr << t;}
-// void _print(int t) {cerr << t;}
+//void _print(int t) {cerr << t;}
 void _print(string t) {cerr << t;}
 void _print(char t) {cerr << t;}
 void _print(lld t) {cerr << t;}
@@ -56,7 +56,7 @@ template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i
 template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
 template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
-
+/*
 
 int ad(int a, int b){
 	a = (a+mod)%mod;
@@ -105,48 +105,46 @@ struct Combo {
     }
 };
 
-
-
-
-//dp based solution 
-/*
-	Let's decide over ith bit
-
-	- if ith bit of all n numbers is set, and n is even then moamen wins
-	- else if ith bit , contains even number of ones, then it is not decidable yet
-		decide from next bit
-	- Loses if odd numbers of ones, with atleast one zero
 */
-void solve(){
-	int n,k;
-	cin >> n >> k;
-	Combo c(n+1);
-	v(int) dp(k+1);
 
-	int var = 0;
-	for(int i=0; i<=n-1; ++i){
-		if(i%2==0){
-			var = ad(var, c.choose(n,i));
+
+
+void solve(){ 
+	int n;
+	cin >> n;
+	v(int) a(n);
+	fr(i,0,n) cin >> a[i];
+
+	if(n==1){
+		if(a[0]==1) {cout<<"2 1 \n";}
+		else {cout<<"1 2 \n";}
+		return;
+	}
+
+	if(a[0] == 1){
+		cout<<n+1<<" ";
+		for(int j=1; j<=n; ++j) cout<<j<<" "; cout<<endl; 
+		return;
+	}
+	if(a[n-1]==0){
+		for(int j=1; j<=n; ++j) cout<<j<<" "; cout<<n+1<<" "; cout<<endl; 
+		return;
+	}
+
+	fr(i,0,n-1){
+		if(a[i]==0){
+			//i to n+1
+			if(a[i+1]==1){
+				for(int j=1; j<=i+1; ++j) cout<<j<<" "; cout<<n+1<<" ";
+				for(int j=i+2; j<=n; ++j) cout<<j<<" "; cout<<endl;
+				return;
+			}
 		}
 	}
 
-	dp[0] = 1;
-	for(int i=1; i<=k; ++i){
-		if(n%2==0)  {
-			int pw = c.power(2,n);
-			pw = c.power(pw,i-1);
-			dp[i] = ad(dp[i],pw); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-		else {
-			dp[i] = ad(dp[i],mul(1,dp[i-1])); //for all ones
-			dp[i] = ad(dp[i],mul(var,dp[i-1]));
-		}
-	}
-	p1(dp[k]);
-	return;
-}
+	p1(-1);
 
+return;} // solve ends 
 
 
 
