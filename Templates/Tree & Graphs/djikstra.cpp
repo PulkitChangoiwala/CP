@@ -23,3 +23,33 @@ void djikstra(int n, int start, vector<vector<int>>&adj, vector<vector<int>> &wg
         }
     }
 }
+
+//Another variant
+vector<long long> ways;
+void dijkstra(int n, int start, vector<vector<pair<int,long long>>>&adj){
+    
+    vector<long long> dis(n+1,1e16);
+    set<pair<long long,int>> st;
+    st.insert({start,0});
+    ways[start] = 1;
+    dis[start] = 0;
+    // parent[start] = -1;
+    
+    while(!st.empty()){
+        auto [d,v] = *(st.begin()); st.erase(st.begin());
+        if(d > dis[v]) continue;
+        
+        for(auto [u, wt] : adj[v]){
+            if(dis[u]>dis[v]+wt && dis[v]!=1e16){
+                // parent[u] = v;
+                ways[u] = ways[v];
+                dis[u] = dis[v]+wt;
+                st.insert({dis[u],u});
+            }
+            else if(dis[u] == dis[v]+wt){
+                ways[u] = (ways[u]+ways[v])%(1000000007);
+            }
+                
+        }
+    }
+}

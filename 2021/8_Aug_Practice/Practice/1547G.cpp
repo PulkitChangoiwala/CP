@@ -107,30 +107,40 @@ struct Combo {
 
 */
 
+/*
+With one dfs traversal, mark cycle nodes, and multiple path nodes
+
+Second dfs traversal mark nodes visited from cycle nodes
+
+Third DFS traversal mark nodes with multiple but finite paths
+*/
 
 v(int) ans;
 v(int) vis;
 v(v(int)) adj;
 
-void dfs(int s){
+void dfs(int s, int mode){
 	vis[s] = 1;
-	ans[s] = 1;
+	if(mode==0) ans[s] = 1;
 	for(auto v : adj[s]){
 		debug(v);
-		if(vis[v]==0){
-			dfs(v);
+		if(mode == 0){
+			if(vis[v]==1){ ans[v] = -1;}
+			else if(vis[v]==2 && ans[v]!=-1){ ans[v] =  2;}
 		}
-		else if(vis[v]==1){
-			ans[v] = -1;
+		else if(mode == 1){
+			if(ans[s]==-1 && ans[v]!=-1){ ans[v] = -1; dfs(v,mode);}
 		}
-		else if(vis[v]==2){
-			ans[v] = 2;
+		else if(mode == 2){
+			if(ans[s]==2 && ans[v]!=-1 && ans[v]!=2) {ans[v]=2; dfs(v,mode);}
 		}
-	}
+		if(vis[v]==0) {dfs(v,mode);}
 
+	}
 
 	vis[s] = 2;
 }
+
 void solve(){ 
 	int n,m;
 	cin >> n >> m;	
@@ -143,9 +153,10 @@ void solve(){
 	}
 	ans.clear(); ans.resize(n+1);
 	vis.clear(); vis.resize(n+1,0);
-	dfs(1);
-	dfs1(1);
-	// for(auto el : ans) cout<<el<<" "; cout<<endl;
+	dfs(1,0); vis.assign(n+1, 0);
+	dfs(1,1); vis.assign(n+1, 0);
+	dfs(1,2); 
+
 	for(int i=1; i<=n; ++i) cout<<ans[i]<<" "; cout<<endl;
 return;} // solve ends 
 

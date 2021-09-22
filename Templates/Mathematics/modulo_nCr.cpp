@@ -1,7 +1,5 @@
 int ad(int a, int b){
-    a = (a+mod)%mod;
-    b = (b+mod)%mod;
-    return (a+b)%mod;
+    return (1ll*a+b+mod)%mod;
 }
 int mul(int a, int b){
     return (1ll*a*b)%mod;

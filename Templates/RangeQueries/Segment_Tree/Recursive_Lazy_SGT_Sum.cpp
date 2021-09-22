@@ -66,10 +66,6 @@ public:
 			push(tl, tr, v);
 			return;
 		}
-
-
-
-
 		int tm = (tl+tr)/2;
 		update(tl,tm,2*v,l,min(r,tm),val,type);
 		update(tm+1, tr,2*v+1, max(l,tm+1),r,val,type);
@@ -84,8 +80,5 @@ public:
 		int tm = (tl+tr)/2;
 		return (query(tl,tm,2*v,l,min(tm,r)) 
 			+ query(tm+1, tr, 2*v+1, max(l,tm+1),r));
-	}
-	void print(){
-		debug_arr(t);
 	}
 };
