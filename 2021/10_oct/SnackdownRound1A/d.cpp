@@ -21,7 +21,7 @@ using namespace std;
 #define PI 3.141592653589793238462
 #define endl "\n"
 #define sz(x) ((int)(x).size())
-#define fast ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);	
+#define fast ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);  
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -58,87 +58,94 @@ template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; f
 
 
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
+
 
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+    int n;
+    cin >> n;
+    v(int) a(n);
+    fr(i,0,n) cin >> a[i];
+    sort(all(a));
+    int ans = INF;
 
+    for(int i=n-1; i>=1; --i){
+        int r = a[n-1] - a[i];
+        int l = a[i-1] - a[0];
+        ans = min(ans, abs(r-l));
+        if(l<r){
+            //search ending point for left partition in i+1 to n-2 range
+            int it = lower_bound(a.begin()+i+1, a.begin()+n-1, a[0]+r) - a.begin();
+            // it = min(it,n-2);
+            if(i<it && it < n-1){
+                ans = min(ans, abs(r-(a[it]-a[0])));
+            }
+            {
+                --it;
+                if(i<it && it < n-1){
+                    ans = min(ans, abs(r-(a[it]-a[0])));
+                }
+                ++it;
+            }
+            {   ++it;
+                if(i<it && it < n-1){
+                    ans = min(ans, abs(r-(a[it]-a[0])));
+                }
+                --it;
+            }
+        }
+    }
 
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
-
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
-	}
+    //case a0 an-1 in one 
+    if(n>=4){
+        int l = a[n-1] - a[0];
+        for(int i=1; i<n-1; ++i){
+            int it = lower_bound(a.begin()+i+1, a.end()-1, a[i]+l) - a.begin();
+            // it = min(it,n-2);
+            if(i<it && it < n-1){
+                ans = min(ans, abs(l-(a[it]-a[i])));
+            }
+            {
+                --it;
+                if(i<it && it < n-1){
+                    ans = min(ans, abs(l-(a[it]-a[i])));
+                }
+                ++it;
+            }
+            {   ++it;
+                if(i<it && it < n-1){
+                    ans = min(ans, abs(l-(a[it]-a[i])));
+                }
+                --it;
+            }
+        }
+    }
+    p1(ans);
 
 return;} // solve ends 
 
 
 
 signed main() {
-	// your code goes here
-	#ifndef ONLINE_JUDGE
-		freopen("/home/changoi/Desktop/Main/CP/Debug/err", "w", stderr);
-	#endif
-	fast
+    // your code goes here
+    #ifndef ONLINE_JUDGE
+        freopen("/home/changoi/Desktop/Main/CP/Debug/err", "w", stderr);
+    #endif
+    fast
 
 
-	auto start1 = chrono::high_resolution_clock::now();
-	int t = 1; 
-	// cin>>t; 
-	while(t--)
-	{solve();}
-	auto stop1 = chrono::high_resolution_clock::now();
-	auto duration = chrono::duration_cast<chrono::microseconds>(stop1 - start1);
-	#ifndef ONLINE_JUDGE
-	cerr << "Time in ms: " << duration . count() / 1000 << endl;
-	#endif
+    auto start1 = chrono::high_resolution_clock::now();
+    int t = 1; 
+    cin>>t; 
+    while(t--)
+    {solve();}
+    auto stop1 = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(stop1 - start1);
+    #ifndef ONLINE_JUDGE
+    cerr << "Time in ms: " << duration . count() / 1000 << endl;
+    #endif
 
-	
-	return 0;
+    
+    return 0;
 }
 
 
@@ -153,10 +160,10 @@ signed main() {
 /******************
 
 
-     Size       Timelimit     Sure Shot       			    Try
+     Size       Timelimit     Sure Shot                     Try
 
 1.   n <= 200      1s          n^3                   n^4 (with pruning)
-2.   n <= 500      1s          n^3(small prune)      n^4 (with pruning) 					
+2.   n <= 500      1s          n^3(small prune)      n^4 (with pruning)                     
 3.   n <= 5000     1s          n^2
 4.   n <= 2*10^5   1s          nLogn                 n(rootN) may work in some cases
 5.   n <= 10^6     1s          nLogn

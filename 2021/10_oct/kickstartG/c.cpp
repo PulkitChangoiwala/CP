@@ -58,60 +58,64 @@ template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; f
 
 
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
-
+int tcnt;
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+	int n,k;
+	cin >> n >> k;
 
+	v(int) b(n), pref(n+1);
+	fr(i,0,n) cin >> b[i];
+	fr(i,0,n) pref[i+1] = pref[i] + b[i];
 
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
+	map<int,vector<pair<int,int>>> dp;
 	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
+	fr(i,0,n){
+		fr(j,i,n){
+			int sum = pref[j+1] - pref[i];
+			if(sum>k) continue;
+			dp[sum].push_back({i,j-i+1});
+		}
+	}
+	map<int, vector<int>> dp1;
+	for(auto &pp : dp){
+		sort(all(pp.second));
+		int sz = pp.ss.size();
+		auto &vt = pp.ss;
+		for(int j=sz-2; j>=0; --j){
+			vt[j].ss = min(vt[j+1].ss, vt[j].ss);
+		}
+	}
 
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
 
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
+	int ans = INF;
+	fr(i,0,n){
+		fr(j,i,n){ //first segment
+			int t1 = pref[j+1] - pref[i], c1 = j-i+1;
+			if(t1==k) {
+				ans = min(ans,c1); 
+				continue;
 			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
+			auto it = dp.find(k-t1);
+			if(it!=dp.end()){
+				//j+1, n-1
+				auto &vt = it->second; //pairs multiset
+				auto itr = lower_bound(all(vt), make_pair(j+1, -INF)) - vt.begin();
+				if(itr!= vt.size()){
+					// int c2 = dp1[k-t1][itr]; //suffix minimum
+					int c2 = vt[itr].ss;
+					ans = min(c2+c1, ans);
+				}
 			}
 		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
+	}
 
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
+	++tcnt;
+	cout<<"Case #"<<tcnt<<": ";
+	if(ans == INF){
+		cout<<-1<<endl;
+	}
+	else {
+		cout<<ans<<endl;
 	}
 
 return;} // solve ends 
@@ -128,7 +132,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();

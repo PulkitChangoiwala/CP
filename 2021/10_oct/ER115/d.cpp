@@ -57,62 +57,73 @@ template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i
 template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
 
+int sop(vector<int> &a){
+	int n = a.size();
+	if(n<3) return 0;
+	int three = 0ll, two = a[n-1]*a[n-2], ones = a[n-1] + a[n-2];
+	for(int i=n-3; i>=0; --i){
+		int nthree = three + two*a[i];
+		int ntwo   = two   + ones*a[i];
+		int none   = ones  + 1ll*a[i];
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
+		three = nthree;
+		two   = ntwo;
+		ones  = none;
+	}
+
+	return three;
+
+}
 
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+	int n;
+	cin >> n;
+	v(int) a(n), b(n);
+	fr(i,0,n) cin >> a[i] >> b[i];
 
-
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
 	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
 
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
+/*
+	// Method 1
+	int res1 = 0, res2 = 0, res3 = 0;
+	vector<unordered_map<int,int>> top(n+1);
+	vector<int> diff(n+1);
+	fr(i,0,n){
+		top[a[i]][b[i]]++;
+		diff[b[i]]++;
 	}
+	for(int i=1; i<=n; ++i){
+		//two topics of type i
+		auto &mp = top[i];
+		int cnt = mp.size();
+		if(cnt==0) continue;
+		int temp = 0;
+		for(auto &pp : mp){
+			temp += (cnt-1)*(diff[pp.first]);
+		}
+		temp -=  (cnt-1)*cnt;
+		res1 += temp;
+	}
+
+	int ans = n*(n-1)*(n-2)/6;
+	ans -= res1;
+	p1(ans);
+*/
+
+
+	// Method 2
+	int ans = n*(n-1)*(n-2)/6, cnt = 0;
+
+	//triple [i,j,k]:- for each i take j & k, such that 
+	//either a[i]==a[j] && b[i]==b[k] || a[i]==a[k] && b[i]==b[j]
+	vector<int> ca(n+1), cb(n+1);
+	fr(i,0,n) {ca[a[i]]++; cb[b[i]]++;}
+	for(int i=0; i<n; ++i){
+		cnt += (ca[a[i]] - 1)*(cb[b[i]]-1);
+	}
+	ans -= cnt;
+	p1(ans);
+
 
 return;} // solve ends 
 
@@ -128,7 +139,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();

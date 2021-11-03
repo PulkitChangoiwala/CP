@@ -57,61 +57,88 @@ template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i
 template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
 
+// int find(vector<int> &ds, int i) {
+//     return ds[i] < 0 ? i : ds[i] = find(ds, ds[i]);
+// }
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
+// bool Union(vector<int> &ds, int i, int j){
+// 	 i = find(ds, i), j = find(ds, j);
+// 	 if(i==j) return false;
+// 	 if(abs(ds[i]) < abs(ds[j])) swap(i,j); 
+// 	 ds[i]+=ds[j]; 
+// 	 ds[j]=i;
+// 	 return true;
+// }
 
+int flag;
+//0 for imposter, 1 crewmate
+int dfs(int st, vector<vector<pair<int,int>>> &adj, vector<int>&vis, int type){
+	int res = 1-type;
+	vis[st] = type;
+	// cout<<st<<" "<<type<<endl;
+	for(auto &pp : adj[st]){
+		int T = (type==0)? 1-pp.second : pp.second;
+		if(vis[pp.first]==-1){
+			res += dfs(pp.first, adj, vis, T);
+		}
+		else if(vis[pp.first]!=T){
+			flag = -1;
+			return -1;
+		}
+	}
+	return res;
+}
 void solve(){ 
-	int n, m;
+	int n,m;
 	cin >> n >> m;
-
-
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
+	vector<vector<pair<int,int>>> adj(n+1);	
 	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
+		int it,j;
+		cin >> it >> j;
+		string s;
+		cin >> s;
+		int type = (s=="imposter")? 0 : 1;
+		adj[it].pb({j,type});
+		adj[j].pb({it,type});
+	}
 
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
+	// debug(adj);
+	flag = 0;
+	int ans = 0;
+	vector<int> vis(n+1, -1);
+	vector<int> res1;
+	for(int i=1; i<=n; ++i){
+		if(vis[i]==-1){
+			int t1 = dfs(i,adj,vis,0);
+			ans += t1;
+			res1.push_back(t1);
 		}
 
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
+	}
+
+
+	int ans1 = 0;
+	vis.assign(n+1,-1);
+	vector<int> res2;
+	int Nflag = flag;
+	flag = 0;
+	for(int i=1; i<=n; ++i){
+		if(vis[i]==-1){
+			int t1 = dfs(i,adj,vis,1);
+			ans1 += t1;
+			res2.push_back(t1);
 		}
-		p1(pref[i]+ans);
+	}
+
+	if(flag == -1  && Nflag == -1) p1(-1);
+	else if(flag==-1) p1(ans);
+	else if(Nflag==-1) p1(ans1);
+	else {
+		int res = 0;
+		for(int i=0; i<res1.size(); ++i){
+			res += max(res1[i], res2[i]);
+		}
+		p1(res);
 	}
 
 return;} // solve ends 
@@ -128,7 +155,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();

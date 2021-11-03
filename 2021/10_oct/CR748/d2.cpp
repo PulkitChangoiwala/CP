@@ -58,61 +58,73 @@ template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; f
 
 
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
 
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+	int n, MIN = 1e9;
+	cin >> n;
 
-
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
-
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
+	v(int) a(n);
+	fr(i,0,n) {cin >> a[i]; MIN = min(MIN, a[i]);}
+	map<int,int> num;
+	fr(i,0,n){
+		a[i] -= MIN;
+		num[a[i]]++;
 	}
+	for(auto &pp : num){
+		if(pp.second >= n/2){
+			p1(-1);
+			return;
+		}
+	}
+
+	sort(all(a));
+	int ans = 1;
+	// for(int i=n/2 + 1;)
+	// debug(a);
+	for(int i=n/2; i>=0; --i){
+		vector<int> b(a.begin()+i+1, a.end());
+		// debug(b);
+		int z = 0;
+		for(auto &el : b) {
+			el -= a[i];
+			if(!el) z++;
+		}
+		// debug(b);
+		
+		map<int,int> temp;
+		for(int j=b.size()-1; j>=0; --j){
+			int sq = sqrt(b[j]);
+			for(int k=1; k<=sq; ++k){
+				if(b[j]%k==0) {
+					temp[k]++;
+					if(temp[k] + z >= n/2 - 1) ans = max(ans, k);
+
+					if(k*k!=b[j]) {
+						int k1 = b[j]/k;
+						temp[k1]++;
+						if(temp[k1] + z >= n/2 - 1) ans = max(ans, k1);
+					}
+				}
+			}
+		}
+	}
+	p1(ans);
+
+/*
+	int Max = num.rbegin()->ff;
+	int ans = 1;
+	for(int d=Max; d>=1; --d){
+		int tt = 0;
+		map<int,int> temp;
+		for(auto &pp : a){
+			temp[pp%d]+= 1;
+			tt = max(temp[pp%d], tt);
+		}
+		if(tt>=n/2)
+			{ans = d; break;}
+	}	
+	p1(ans);
+*/
 
 return;} // solve ends 
 
@@ -128,7 +140,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();

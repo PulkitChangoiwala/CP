@@ -58,61 +58,57 @@ template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; f
 
 
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
 
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+	int n,k;
+	cin >> n >> k;
 
+	v(set<int>) adj(n+1);
 
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
-
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
+	fr(i,0,n-1){
+		int u,v;
+		cin >> u >> v;
+		adj[u].insert(v);
+		adj[v].insert(u);
 	}
+
+	set<pr> st;
+	v(int) deg(n+1);
+	int rem = 0;
+	fr(i,1,n+1){
+		if(adj[i].size()<=1)
+			st.insert({adj[i].size(),i});
+		deg[i] = adj[i].size();
+	}
+
+
+	k = min(n+1, k);
+	debug(st);
+	fr(op,0,k){
+		
+		unordered_set<int> eff;
+		while(st.size()){
+			auto pp = *st.begin(); st.erase(st.begin());
+			rem++;
+			debug(pp);
+			debug(rem);
+			for(auto &u : adj[pp.second]){
+				deg[u]--;
+				adj[u].erase(pp.second);
+				if(deg[u]==1)
+					eff.insert(u);
+			}
+			adj[pp.second].clear();
+		}
+
+		for(auto &el : eff){
+			st.insert({deg[el],el});
+		}
+	}
+
+	p1(n-rem);
+
+
 
 return;} // solve ends 
 
@@ -128,7 +124,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();

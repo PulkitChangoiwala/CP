@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -56,67 +55,131 @@ template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_pr
 template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
+/*
+//solution 1
+int a,b;
+v(v(int)) diff;
+int dp[41][41][41][41];
+void dfs(int i, int r1, int r2, int red, string &s){
+	if(i==s.length()-1){
+		int res1 = red - (s.length()-red); 
+		if(r1==0 && r2==0 && red && red<s.length())
+			diff[i][abs(res1)]++;
+		return;
+	}
+	if(dp[i][r1][r2][red]!=-1) return;
+	//paint i+1 
+	int nr1  = (r1*10 + (s[i+1]-'0'))%a; //red
+	int nr2  = (r2*10 + (s[i+1]-'0'))%b; //black
+	dfs(i+1, nr1, r2, red+1, s);
+	dfs(i+1, r1, nr2, red, s);
+	dp[i][r1][r2][red] = 1;
+	return;
+}
 
-
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
-
+int dfs1(int i, int r1, int r2, int red, string &s, int d){
+	if(i==s.length()-1){
+		int res1 = red - (s.length()-red); 
+		if(r1==0 && r2==0 && abs(res1) == d && abs(res1)!=s.length()) return 0;
+		return -1;
+	}
+	if(dp[i][r1][r2][red]!=-1) return dp[i][r1][r2][red];
+	//paint i+1 
+	int nr1  = (r1*10 + (s[i+1]-'0'))%a; //red
+	int nr2  = (r2*10 + (s[i+1]-'0'))%b; //black
+	int res1 = dfs1(i+1, nr1, r2, red+1, s, d);
+	int res2 = dfs1(i+1, r1, nr2, red, s, d);
+	dp[i][r1][r2][red] = (res1>=0)?2*res1+1 : (res2>=0)? 2*res2 : -2;
+	return dp[i][r1][r2][red];
+}
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+	int n;
+	cin >> n;
+	cin >> a >> b;
+	string s;
+	cin >> s;
+	memset(dp, -1, sizeof dp);
+	diff.clear();
+	diff.resize(n+1, vector<int>(100,-1));
 
+	int nr1  = ((s[0]-'0'))%a; //red
+	int nr2  = ((s[0]-'0'))%b; //black
+	dfs(0,nr1,0,1,s);
+	dfs(0,0,nr2,0,s);	
 
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
-
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
+	for(int d=0; d<n; ++d){
+		if(diff[n-1][d]!=-1){
+			// p1(d);
+			memset(dp, -1, sizeof dp);
+			int mask, mask1 = dfs1(0,nr1,0,1,s,d), mask2 = dfs1(0,0,nr2,0,s,d);	
+			string res = "";
+			if(mask1 >=0)mask = 2*mask1 + 1;
+			else mask = 2*mask2;
 				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
+			// debug(mask);
+			for(int i=0; i<n; ++i){
+				if(mask&(1ll<<i)) res += 'R';
+				else res += 'B';
 			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
+			p1(res);
+			return;
 		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
 	}
 
+	p1(-1);
+
 return;} // solve ends 
+*/
 
+//solution 2
 
+int n,a,b;
+int curr[41], res[41];
+int ans;
+int vis[41][41][41][41];
+
+void dfs(int i, int red, int r1, int r2, string &s){
+	if(vis[i][red][r1][r2]) return;
+	vis[i][red][r1][r2] = 1;
+
+	if(i==n){
+		if(!r1 && !r2 && red && red<n && abs(n-2*red) < ans){
+			ans = abs(n-2*red);
+			for(int i=0; i<n; ++i){
+				res[i] = curr[i];
+			}
+		}
+		return;
+	}
+	//current as red 
+	curr[i] = 1;
+	int nr1 = (r1*10 + s[i]-'0')%a;
+	dfs(i+1,red+1,nr1,r2,s);
+	//current as black
+	curr[i] = 0;
+	int nr2 = (r2*10 + s[i]-'0')%b;
+	dfs(i+1,red,r1,nr2,s);	
+}
+void solve(){
+	cin >> n;
+	cin >> a >> b;
+	string s;
+	cin >> s;
+	ans = 50;
+	memset(vis, 0, sizeof vis);
+	dfs(0,0,0,0,s);
+	if(ans==50) {
+		p1(-1);
+		return;
+	}
+	string st = "";
+	for(int i=0; i<n; ++i){
+		if(res[i]) st += 'R';
+		else st += 'B';
+	}
+	p1(st);
+
+}
 
 signed main() {
 	// your code goes here
@@ -128,7 +191,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();
@@ -179,4 +242,3 @@ Code belongs to:
 ░                                                          
 
 **************/
-

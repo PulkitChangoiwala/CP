@@ -1,5 +1,8 @@
 
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define int long long
 #define fr(i,s,e) for(int i=s;i<e;++i)
@@ -22,6 +25,11 @@ using namespace std;
 #define endl "\n"
 #define sz(x) ((int)(x).size())
 #define fast ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);	
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+/*
+	find_by_order(k)  -> returns pointer to k+1 th element in set
+	order_of_key(val) -> returns number of elements strictly less than val in the set
+*/
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -58,61 +66,43 @@ template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; f
 
 
 
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
 
 void solve(){ 
-	int n, m;
-	cin >> n >> m;
+	int n,k;
+	cin >> n >> k;
 
+	vector<int> b(n);
+	fr(i,0,n) { cin >> b[i]; }
 
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
-
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
+	vector<pr> vt;
+	fr(i,0,n){
+		vt.pb({b[i],i});
 	}
+
+	sort(all(vt));
+
+
+	int cnt = 0;
+
+	vector<int> res(n);
+    ordered_set ii;
+	for(int i=n-1; i>=0; --i){
+
+		auto val = vt[i].first, ind = vt[i].second;
+		//finding answer for ind
+		auto less = ii.order_of_key(ind);
+		if(less + k <=ii.size()){
+			auto val = *ii.find_by_order(less+k-1);
+			res[ind] = val;
+		}
+		else res[ind] = -1;
+		ii.insert(ind);
+
+	}
+
+	// reverse(all(res));
+	for(auto &el : res) cout<<el<<" ";
+	cout<<endl;
 
 return;} // solve ends 
 
@@ -128,7 +118,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();

@@ -57,62 +57,104 @@ template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i
 template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
 
-
-const int k = 300;
-const int M = 200005;
-int pref[M];
-int start[M];
-int store[k][k];
-
-void solve(){ 
-	int n, m;
-	cin >> n >> m;
-
-
-	vector<pair<int,int>> trains(n);
-	fr(i,0,n) cin >> trains[i].ff >> trains[i].ss;
-	
-	fr(i,0,m){
-		int op, train;
-		cin >> op >> train;
-		--train;
-		int run = trains[train].ff, cycle = run + trains[train].ss;
-		
-
-		int change, stDay;
-		if(op ==  1) {change = 1; stDay = i; start[train] = i;}
-		else if(op ==  2) {change = -1; stDay = start[train];}
-
-		if(cycle >= k){ 
-
-			if(op==2){ //removing partial traversed cycle of the train
-				int rem = (i-stDay)%cycle, currSt = i-rem; 
-
-				if(rem>= run) pref[i]+=change; 
-				else if(currSt + run<m)   pref[currSt+run] += change;
-				
-				if(currSt + cycle<m) pref[currSt+cycle] -= change;
-				stDay = currSt+cycle; //nextstart
-
-			}
-
-			for(int day = stDay; day+run<m; day += cycle){
-				pref[day+run]+=change;
-				if(day+cycle < m) pref[day+cycle]-= change;
-			}
-		}
-		else {
-			for(int day=run; day<cycle; ++day)
-				store[cycle][(stDay+day)%cycle]+=change;
-		}
-
-		if(i) pref[i] += pref[i-1];
-		int ans = 0;
-		for(int cycle=1; cycle<k; ++cycle){
-			ans+=store[cycle][i%cycle];
-		}
-		p1(pref[i]+ans);
+int d1(vector<int> &vt, int x, int y){
+	//bottom left, top right
+	int x1 = min(abs(x-vt[0]), abs(x-vt[2]));
+	int y1 = min(abs(y-vt[1]), abs(y-vt[3]));
+	if(vt[0]<=x && x<=vt[2]){
+		x1 = 0;
 	}
+	if(vt[1]<=y && y<=vt[3]){
+		y1 = 0;
+	}
+	return x1+y1;
+}
+
+int d(v(v(int)) &pt, int x, int y){
+	int res = 0;
+	for(auto &vt : pt){
+		res += d1(vt,x,y);
+	}
+	return res;
+}
+int g(v(pr) &pt, int x){
+	int res = 0;
+
+	for(auto &t : pt){
+		if(t.ss == 1){
+			res += t.ff-x;
+		}
+	}
+	return res;
+}
+
+int f(v(pr) &pt){
+	int n = pt.size(), ed = 0, st = 1, last = pt[0].ff, total = pt.size()/2;
+	int dis = 0, curr = INF, ans = pt[0].ff;
+	dis = curr = g(pt,ans);	
+	// debug(pt);
+	// debug(dis);
+	// debug(last);
+	for(int i=1; i<n; ++i){
+		int change = pt[i].ff - last;
+		if(pt[i].ss == -1){ //end
+			dis += ed*(change);
+			ed++;
+			st--;
+			dis -= (total - st - ed)*(change);
+		}
+		else {  //start
+			dis += ed*(change);
+			dis -= (total - st - ed)*(change);
+			st++;
+		}
+		// debug(dis);
+		if(dis < curr){
+			curr = dis;
+			ans = pt[i].ff;
+		}
+		last = pt[i].ff;
+	}
+
+	return ans;
+}
+int tcnt;
+void solve(){ 
+	int k;
+	cin >> k;
+	v(v(int)) pts(k, v(int)(4));
+	fr(i,0,k){
+		cin >> pts[i][0] >> pts[i][1] >> pts[i][2] >> pts[i][3];
+	}
+
+	v(int) ans(2);
+	// int curr = INF;
+	// for(int x=-110; x<=110; ++x){
+	// 	for(int y=-110; y<=110; ++y){
+	// 		int dis = d(pts,x,y);
+	// 		if(dis < curr){
+	// 			ans = {x,y};
+	// 			curr = dis;
+	// 		}
+	// 	}
+	// }
+
+	v(pr) xs, ys;
+	for(auto &vt : pts){
+		xs.push_back({vt[0],1});
+		xs.push_back({vt[2],-1});
+		ys.push_back({vt[1],1});
+		ys.push_back({vt[3],-1});
+
+	}
+	sort(all(xs));
+	sort(all(ys));
+	ans[0] = f(xs);
+	ans[1] = f(ys);
+
+	++tcnt;
+	cout<<"Case #"<<tcnt<<": ";
+	cout<<ans[0]<<" "<<ans[1]<<endl;
 
 return;} // solve ends 
 
@@ -128,7 +170,7 @@ signed main() {
 
 	auto start1 = chrono::high_resolution_clock::now();
 	int t = 1; 
-	// cin>>t; 
+	cin>>t; 
 	while(t--)
 	{solve();}
 	auto stop1 = chrono::high_resolution_clock::now();
