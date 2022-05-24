@@ -1,9 +1,11 @@
 
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
 using namespace std;
+#define int long long
 #define fr(i,s,e) for(int i=s;i<e;++i)
 #define fr1(i,s,e) for(int i=s;i>e;--i)
 #define p0(a) cout << a <<" "
@@ -15,7 +17,6 @@ using namespace std;
 #define v(d) vector<d>
 #define all(x) (x).begin(), (x).end()
 #define pr pair<int, int>
-#define pr1(d1,d2) pair<d1,d2>
 #define pb push_back
 #define ppb pop_back
 #define mp make_pair
@@ -30,6 +31,7 @@ using namespace std;
 	find_by_order(k)  -> returns pointer to k+1 th element in set
 	order_of_key(val) -> returns number of elements strictly less than val in the set
 */
+
 typedef long long ll;
 typedef unsigned long long ull;
 typedef long double lld;
@@ -37,36 +39,119 @@ typedef long double lld;
 const int  mod = 1e9 +7;
 const int mod1= 998244353;
 
-#define debug(x) cout << #x <<" "; _print(x); cout << endl;
-// #define debug(x)
+#ifndef ONLINE_JUDGE
+#define debug(x) cerr << #x <<" "; _print(x); cerr << endl;
+#else
+#define debug(x)
+#endif
 
-void _print(ll t) {cout << t;}
-void _print(int t) {cout << t;}
-void _print(string t) {cout << t;}
-void _print(char t) {cout << t;}
-void _print(lld t) {cout << t;}
-void _print(double t) {cout << t;}
-void _print(ull t) {cout << t;}
+void _print(ll t) {cerr << t;}
+//void _print(int t) {cerr << t;}
+void _print(string t) {cerr << t;}
+void _print(char t) {cerr << t;}
+void _print(lld t) {cerr << t;}
+void _print(double t) {cerr << t;}
+void _print(ull t) {cerr << t;}
 
 template <class T, class V> void _print(pair <T, V> p);
 template <class T> void _print(vector <T> v);
 template <class T> void _print(set <T> v);
 template <class T, class V> void _print(map <T, V> v);
 template <class T> void _print(multiset <T> v);
-template <class T, class V> void _print(pair <T, V> p) {cout << "{"; _print(p.ff); cout << ","; _print(p.ss); cout << "}";}
-template <class T> void _print(vector <T> v) {cout << "[ "; for (T i : v) {_print(i); cout << " ";} cout << "]";}
-template <class T> void _print(set <T> v) {cout << "[ "; for (T i : v) {_print(i); cout << " ";} cout << "]";}
-template <class T> void _print(multiset <T> v) {cout << "[ "; for (T i : v) {_print(i); cout << " ";} cout << "]";}
-template <class T, class V> void _print(map <T, V> v) {cout << "[ "; for (auto i : v) {_print(i); cout << " ";} cout << "]";}
+template <class T, class V> void _print(pair <T, V> p) {cerr << "{"; _print(p.ff); cerr << ","; _print(p.ss); cerr << "}";}
+template <class T> void _print(vector <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
+template <class T> void _print(set <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
+template <class T> void _print(multiset <T> v) {cerr << "[ "; for (T i : v) {_print(i); cerr << " ";} cerr << "]";}
+template <class T, class V> void _print(map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
+template <class T, class V> void _print(unordered_map <T, V> v) {cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";}
 
-int ad(int a, int b){
-	a = (a+mod)%mod;
-	b = (b+mod)%mod;
-    return (a+b)%mod;
+
+map<pair<int,int>,int> query;
+int ask(int l, int r){
+	if(!query.count({l,r})){
+		cout<<"? "<<l<<" "<<r<<endl;
+		cout<<flush;
+		int x;
+		cin >> x;
+		query[{l,r}] = x;
+	}
+	return query[{l,r}];
 }
-int mul(int a, int b){
-    return (1ll*a*b)%mod;
+pair<int,int> eq(int a, int b, int c){
+	/*
+		(-b +- sqrt(b^2 - 4ac))/2a
+	*/
+	int d = b*b - 4*a*c;
+	int dsrt = sqrt(d);
+	int f = (-b + dsrt)%2 ? -1 : (-b + dsrt)/2;
+	int s = (-b - dsrt)%2 ? -1 : (-b - dsrt)/2;
+	return {f,s};
 }
+void solve(){ 
+	int n;
+	cin >> n;
+	query.clear();
+	int total = ask(1,n); //used 1
+	int l=1, r = n, i = 1;
+	while(l<=r){ //find i;
+		int mid = l + (r-l)/2;
+		int inv = ask(1,mid);
+		if(inv == 0){
+			i = mid;
+			l = mid+1;
+		}
+		else {
+			r = mid-1;
+		}
+	} //used 30 at max
+
+	int temp = ask(i+1,n); //used 1 here
+ 	//j-i-1 = total - temp
+	int j = total - temp + i + 1;
+	int invij = (j-i-1)*(j-i)/2;
+	int invjk = total - invij;
+	/*
+		(k-j+1)*(k-j)/2 = invjk
+		k^2 -jk + k -jk + j^2 - j = 2invjk
+		k^2 -(2j-1)k + j^2 - j - 2invjk 
+	*/
+	auto pp = eq(1,-(2*j-1),j*j-j-2*invjk);
+	int k = -1;
+	if(pp.ff>j) k = pp.ff;
+	else k = pp.ss;
+	cout<<"! "<<i<<" "<<j<<" "<<k<<endl;
+	cout<<flush;
+return;} // solve ends 
+
+
+signed main() {
+	// your code goes here
+	#ifndef ONLINE_JUDGE
+		freopen("/home/changoi/Desktop/Main/CP/Debug/err", "w", stderr);
+	#endif
+	fast
+
+
+	auto start1 = chrono::high_resolution_clock::now();
+	int t = 1; 
+	cin>>t; 
+	while(t--)
+	{solve();}
+	auto stop1 = chrono::high_resolution_clock::now();
+	auto duration = chrono::duration_cast<chrono::microseconds>(stop1 - start1);
+	#ifndef ONLINE_JUDGE
+	cerr << "Time in ms: " << duration . count() / 1000 << endl;
+	#endif
+
+	
+	return 0;
+}
+
+
+
+
+
+
 
 
 
